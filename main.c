@@ -119,20 +119,13 @@ void xid_connection_callback(xid_dev_t *xid_dev, int status)
     //but ideally we should search for an interface with the specified bInterfaceClass and store the interface number incase they differ?
 }
 
-void xid_disconnect_callback(xid_dev_t *xid_dev, int status)
-{
-    debugPrint("XID disconnected: VID: %04x PID: %04X\n", xid_dev->idVendor, xid_dev->idProduct);
-    if (xid_dev->user_data)
-        free(xid_dev->user_data);
-}
-
 int main(void)
 {
     XVideoSetMode(640, 480, 32, REFRESH_DEFAULT);
 
     usbh_core_init();
     usbh_xid_init();
-    usbh_install_xid_conn_callback(xid_connection_callback, xid_disconnect_callback);
+    usbh_install_xid_conn_callback(xid_connection_callback, NULL);
     debugPrint("Insert your dongle into the slot\n");
 
     while (1) {
