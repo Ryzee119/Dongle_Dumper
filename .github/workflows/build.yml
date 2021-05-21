@@ -32,9 +32,7 @@ jobs:
         export PATH=$PATH:/usr/lib/llvm-10/bin
         make -j$(nproc) NXDK_DIR=~/nxdk
 
-    # Only create artifact on a push to master
-    - if: github.event_name == 'push' 
-      name: Upload Artifact
+    - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:
         name: dongle_dumper
