@@ -1,0 +1,43 @@
+name: Xbox
+
+on:
+  pull_request:
+    branches: [ master ]
+  push:
+    branches: [ master ]
+
+jobs:
+  Xbox:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install and Setup Dependencies
+      run: |
+        sudo apt-get update -y && sudo apt-get install -y flex bison clang lld
+        cd ~
+        git clone https://github.com/Ryzee119/nxdk.git
+        cd nxdk
+        git checkout usbh
+        git submodule init
+        git submodule update
+        cd ~
+ 
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+
+    - name: Compile
+      run: |
+        export PATH=$PATH:/usr/lib/llvm-10/bin
+        make -j$(nproc) NXDK_DIR=~/nxdk
+
+    # Only create artifact on a push to master
+    - if: github.event_name == 'push' 
+      name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: dongle_dumper
+        path: |
+          DVD Dongle Firmware Dumper.iso
+          bin
