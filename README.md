@@ -5,11 +5,19 @@ Dump the firmware off a Original Xbox DVD Movie Playback Dongle straight from th
 * Code adapted from https://github.com/XboxDev/dump-dvd-kit/blob/master/dump-dvd-kit.py
 
 ## Compile
--------------------------
-* Setup and install dependancies for [nxdk](https://github.com/XboxDev/nxdk). However instead clone my fork `git clone --recursive https://github.com/Ryzee119/nxdk.git`
-* Then `git checkout usbh` in the nxdk directory.
-* Then do this from the Dongle Dumper directory directoy:  
+Install nxdk dependencies and get usb host fork
 ```
+sudo apt-get install flex bison clang lld
+git clone https://github.com/Ryzee119/nxdk.git
+cd nxdk
+git checkout usbh
+git submodule init
+git submodule update
+```
+Then
+```
+git clone https://github.com/Ryzee119/Dongle_Dumper.git
+cd Dongle_Dumper
 make NXDK_DIR=/path/to/nxdk
 ```
 
