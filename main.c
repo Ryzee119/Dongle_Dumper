@@ -34,7 +34,7 @@ void xid_connection_callback(xid_dev_t *xid_dev, int status)
                          REQUEST_INFO,                                          //bRequest
                          0x0000,                                                //wValue
                          1,                                                     //wIndex (FIXME See 1.))
-                         6,                                                     //wLength
+                         sizeof(xremote_info),                                  //wLength
                          (uint8_t *)info,
                          &rx_bytes,
                          10                                                     //Timeout (in 10ms blocks)
