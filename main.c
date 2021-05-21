@@ -42,7 +42,7 @@ void xid_connection_callback(xid_dev_t *xid_dev, int status)
 
     if (ret != USBH_OK)
     {
-        debugPrint("Error: Could not read info from dongle\n");
+        debugPrint("Error: Could not read info from dongle %d\n", ret);
         assert(0);
     }
 
@@ -84,7 +84,7 @@ void xid_connection_callback(xid_dev_t *xid_dev, int status)
 
         if (ret != USBH_OK)
         {
-            debugPrint("Error: Could not read rom data at pos %d for %d bytes\n", cursor >> 10, chunk_size);
+            debugPrint("Error: Could not read rom data at pos %d for %d bytes. %d \n", cursor >> 10, chunk_size, ret);
             assert(0);
         }
 
