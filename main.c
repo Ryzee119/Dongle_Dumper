@@ -9,6 +9,8 @@
 #define REQUEST_INFO 1
 #define REQUEST_ROM  2
 
+int sha1digest(uint8_t *digest, char *hexdigest, const uint8_t *data, size_t databytes);
+
 typedef struct __attribute__((packed)) 
 {
     uint16_t version;
@@ -129,6 +131,12 @@ void xid_connection_callback(xid_dev_t *xid_dev, int status)
     assert(raw_data + raw_data_size == image_size);
 
     debugPrint("DVD Dongle is for region: %d\n", game_region);
+
+    uint8_t digest[20];
+    char hex_digest[41];
+    sha1digest(digest, hex_digest, rom_data, info->rom_size);
+
+    debugPrint("SHA1: %s\n", hex_digest);
 
     debugPrint("Writing file to %s\n", ROM_NAME);
     if (fwrite(rom_data, 1, info->rom_size, dongle_rom_file) != info->rom_size)
