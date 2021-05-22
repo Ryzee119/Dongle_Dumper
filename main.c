@@ -100,7 +100,37 @@ void xid_connection_callback(xid_dev_t *xid_dev, int status)
         
     }
 
-    debugPrint("Read %d bytes. Writing to %s\n", info->rom_size, ROM_NAME);
+    debugPrint("Done... checking data\n");
+    //Extract some info and sanity check the dump
+    #define GET_UINT(a, b) *(uint32_t *)(&a[b])
+    uint8_t *xbe_start = (uint8_t *)((uint32_t)rom_data + sizeof(xremote_info));
+
+    //For these offsets ref https://xboxdevwiki.net/Xbe
+    uint32_t base_address = GET_UINT(xbe_start, 0x104);
+    uint32_t certificate = GET_UINT(xbe_start, 0x118) - base_address;
+    uint32_t section_headers = GET_UINT(xbe_start, 0x120) - base_address;
+    uint32_t image_size = GET_UINT(xbe_start, 0x10C);
+    uint32_t raw_data = GET_UINT(xbe_start, section_headers + 12);
+    uint32_t raw_data_size = GET_UINT(xbe_start, section_headers + 16);
+    uint32_t game_region = GET_UINT(xbe_start, certificate + 160);
+
+#if (0)
+    debugPrint("base_address: %d\n", base_address);
+    debugPrint("certificate: %d\n", certificate);
+    debugPrint("section_headers: %d\n", section_headers);
+    debugPrint("image_size: %d\n", image_size);
+    debugPrint("raw_data: %d\n", raw_data);
+    debugPrint("raw_data_size: %d\n", raw_data_size);
+#endif
+
+    assert((image_size + sizeof(xremote_info)) == info->rom_size);
+    assert(GET_UINT(xbe_start, certificate + 156) == 0x00000100); //AllowedMediaTypes == DONGLE
+    assert(GET_UINT(xbe_start, certificate + 172) == info->version);
+    assert(raw_data + raw_data_size == image_size);
+
+    debugPrint("DVD Dongle is for region: %d\n", game_region);
+
+    debugPrint("Writing file to %s\n", ROM_NAME);
     if (fwrite(rom_data, 1, info->rom_size, dongle_rom_file) != info->rom_size)
     {
         debugPrint("Error: Could not write %s\n", ROM_NAME);
@@ -112,7 +142,7 @@ void xid_connection_callback(xid_dev_t *xid_dev, int status)
     usbh_free_mem(rx_buff, max_chunk);
     free(rom_data);
 
-    debugPrint("Done!");
+    debugPrint("Done!\n");
 
     //FIXME
     //1. wIndex of one points to interface one with bInterfaceClass = 0x59., bInterfaceSubClass = 0. This is right for my Xbox dongles on hand,
