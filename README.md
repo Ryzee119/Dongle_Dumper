@@ -6,16 +6,7 @@ Dump the firmware off a Original Xbox DVD Movie Playback Dongle straight from th
 * SHA1 implementation from https://github.com/CTrabant/teeny-sha1. (MIT license)
 
 ## Compile
-Install nxdk dependencies and get usb host fork
-```
-sudo apt-get install flex bison clang lld
-git clone https://github.com/Ryzee119/nxdk.git
-cd nxdk
-git checkout usbh
-git submodule init
-git submodule update
-```
-Then
+Setup and install [nxdk](https://github.com/XboxDev/nxdk) then:
 ```
 git clone https://github.com/Ryzee119/Dongle_Dumper.git
 cd Dongle_Dumper
